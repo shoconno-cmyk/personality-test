@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>41 AI Models Meet the Big Five</title>
+<meta name="description" content="I scored 41 AI models on the Big Five personality traits using Artificial Analysis's PersonalityBench, and found the data only supports about two real dimensions.">
+<meta property="og:title" content="41 AI Models Meet The Big Five Personality Test">
+<meta property="og:description" content="A curious peek: Big Five scores for 41 AI models, and the two dimensions hiding underneath.">
+<style>
+:root {
+  --bg: #F6F4EF; --surface: #FFFFFF; --ink: #1B1B1F; --quiet: #6B6B74; --rule: #E2DED4; --grid: #E4E0D7;
+  --accent: #2F6FE4;
+  --anthropic: #2F6FE4; --openai: #E8692F; --google: #1FA27A; --meta: #7A5BD6; --xai: #D6467F; --other: #A9A69D;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141417; --surface: #1C1C21; --ink: #ECEAE5; --quiet: #9C9AA3; --rule: #2E2E35; --grid: #2E2E35;
+    --accent: #6A9BFF;
+    --anthropic: #6A9BFF; --openai: #FF8A52; --google: #3CC495; --meta: #A58BFF; --xai: #FF6FA3; --other: #77757D;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 720px; margin: 0 auto; padding: 48px 16px 80px; }
+header .kicker { color: var(--quiet); font-size: 14px; letter-spacing: .02em; margin: 0 0 12px; }
+h1 { font-size: clamp(32px, 7vw, 46px); line-height: 1.08; letter-spacing: -.02em; margin: 0 0 16px; }
+header .byline { color: var(--quiet); font-size: 14px; margin: 0 0 32px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+h2 { font-size: 26px; line-height: 1.2; letter-spacing: -.01em; margin: 56px 0 12px; }
+h3 { font-size: 19px; margin: 36px 0 8px; }
+p, li { margin: 0 0 14px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+ul { padding-left: 22px; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 20px 0 24px; display: block; overflow-x: auto; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+th { color: var(--quiet); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+tbody tr:nth-child(5) td { color: var(--quiet); font-style: italic; }
+.chart { margin: 28px 0 28px; padding: 20px 16px 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; }
+.chart figcaption { color: var(--quiet); font-size: 13px; margin-top: 10px; line-height: 1.45; }
+.chart-title { font-weight: 650; font-size: 17px; margin: 0 0 4px; }
+.chart-sub { color: var(--quiet); font-size: 14px; margin: 0 0 14px; }
+.radar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 8px; }
+.radar-grid-4 { grid-template-columns: repeat(4, 1fr); }
+.radar-grid-4 h4 { font-size: 12.5px; }
+@media (max-width: 560px) { .radar-grid { grid-template-columns: repeat(2, 1fr); } .radar-grid-4 { grid-template-columns: repeat(3, 1fr); } .radar-grid-4 h4 { font-size: 11.5px; min-height: 2.6em; } }
+.radar-card { text-align: center; }
+.radar-card h4 { margin: 8px 0 0; font-size: 14px; font-weight: 650; }
+.radar-card svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 0 8px; }
+.legend button {
+  font: inherit; font-size: 13px; color: var(--ink); background: transparent; border: 1px solid var(--rule);
+  border-radius: 999px; padding: 4px 11px 4px 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+}
+.legend button[aria-pressed="true"] { border-color: var(--ink); }
+.legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+#scatter svg { width: 100%; height: auto; display: block; touch-action: manipulation; }
+.pt { cursor: pointer; transition: opacity .15s; }
+.tip {
+  position: fixed; z-index: 10; pointer-events: none; background: var(--ink); color: var(--bg);
+  font-size: 13px; line-height: 1.35; padding: 7px 10px; border-radius: 8px; max-width: 240px;
+  opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s;
+}
+.tip.on { opacity: 1; transform: none; }
+.tip b { font-weight: 650; }
+@media print { body { background: #fff; font-size: 12.5pt; } main { padding: 0 8px; } .chart { break-inside: auto; border: none; padding: 0; } .radar-card, .chart-title, .chart-sub, #scatter, h2, h3, table, tr { break-inside: avoid; } h2, h3 { break-after: avoid; } .legend button { border-color: #ccc; } .tip { display: none; } }
+footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule); color: var(--quiet); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <p class="kicker">A curious peek, not serious psychometrics</p>
+  <h1>41 AI Models Meet the Big Five Personality Test</h1>
+  <p class="byline">Shane O'Connor · 27 October 2026 · Data: Artificial Analysis PersonalityBench</p>
+</header>
+<article>
+<p>I scored 41 AI models on the Big Five personality traits, then found the data only supports about two real dimensions, and one of them looks like each lab's house style.</p>
+<p>This is a curious peek, not a validated psychometric instrument. I wanted to see what happens when you hold a new kind of writer up against the most studied model of human personality. The leaderboards came out the way you might expect. The structure underneath them did not.</p>
+<h2 id="why-the-big-five">Why the Big Five</h2>
+<p>The Big Five grew out of language. In 1936, Gordon Allport and Henry Odbert combed the English dictionary for every word that describes a person, about 18,000 of them. Their bet, the lexical hypothesis, was that the traits that matter most end up encoded in everyday words.</p>
+<p>Decades of factor analysis on trait ratings kept finding the same five clusters, first in Tupes and Christal's US Air Force research (1961), then in Norman's replication (1963). Lewis Goldberg named them the Big Five in 1990. Paul Costa and Robert McCrae built the NEO PI-R questionnaire, and McCrae and John's 1992 overview became the standard reference. Kibeom Lee and Michael Ashton later added a sixth factor, Honesty-Humility, in the HEXACO model.</p>
+<p>That origin is why this experiment felt worth trying. AA-PersonalityBench has AI judges describe AI writing in human trait words: friendly, confident, eloquent, sycophantic. It is the lexical approach run in reverse, on a new kind of writer.</p>
+<h2 id="how-i-scored-them">How I scored them</h2>
+<p>The data is a snapshot of Artificial Analysis's AA-PersonalityBench from 27 October 2026: 41 models, 30 writing-style traits, each reported as a percentile rank across the pool. Every model answered 900 questions with no system prompt, so this is each model's default voice. A panel of three AI judges (Gemini 3.8 Flash, Claude Sonnet 5.5 and GLM 5.3 Flash) compared answers two at a time, blind.</p>
+<p>I assigned the 30 traits to Big Five and HEXACO dimensions by meaning, and locked that mapping before looking at any results. Each trait is used at most once per dimension. Reverse-scored traits are marked (−).</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Traits</th>
+<th>Reverse-scored</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Openness</td>
+<td>Creative, Open-Ended, Metaphorical, Lexically Varied, Eloquent</td>
+<td>none</td>
+</tr>
+<tr>
+<td>Conscientiousness</td>
+<td>Structured, Answer First, Bottom-Line Summary, Evidence-Based, Literate, Actionable Guidance, Pragmatic</td>
+<td>Slop</td>
+</tr>
+<tr>
+<td>Extraversion</td>
+<td>Friendly, Humorous, Confident, Opinionated, Direct</td>
+<td>none</td>
+</tr>
+<tr>
+<td>Agreeableness</td>
+<td>Sincere, Emotionally Intelligent</td>
+<td>Constructive Pushback</td>
+</tr>
+<tr>
+<td>Neuroticism</td>
+<td>Not scored. No trait measures emotional reactivity, because the benchmark never puts models under emotional pressure.</td>
+<td>none</td>
+</tr>
+<tr>
+<td>Honesty-Humility (HEXACO)</td>
+<td>Truthful, Sincere, Admits Uncertainty, Disclaims Assumptions, Flags Nuances</td>
+<td>Sycophantic</td>
+</tr>
+</tbody>
+</table>
+<p>Friendly sits under Extraversion because the NEO PI-R places warmth there. Sycophancy was kept out of Agreeableness on purpose: it fits the Compliance facet but runs against Straightforwardness, so it pulls the scale both ways. Four traits had no clean home and were left out: Natural Sounding, Information Dense, Resource-Specific and Scannable.</p>
+<p>Each percentile was converted to a z-score with a rank-based normal transformation (Blom), reverse-scored traits were flipped, and each dimension is the mean of its traits.</p>
+<p><strong>What this measures.</strong> These are scores for text behaviour, described in a human trait vocabulary. A model that writes in an agreeable pattern is not claimed to be agreeable, and nothing here depends on whether models have inner experience.</p>
+<h2 id="the-leaderboards">The leaderboards</h2>
+<p>Three of the five scales held together well, and the newest, most polished models filled out nearly every axis. The radars show nine models, at least one per major lab, as each model's rank among all 41.</p>
+<figure class="chart"><div id="radar"></div><figcaption>Big Five and HEXACO scores derived from AA-PersonalityBench, 41 models, snapshot 27 Oct 2026. Hover or tap a point for its score.</figcaption></figure>
+<p>How well each scale holds together (Cronbach's alpha, where 0.7 or above is respectable): Honesty-Humility 0.91, Openness 0.89, Conscientiousness 0.81, Extraversion 0.64. The locked Agreeableness scale failed at −1.04, so the radars use the repaired version, whose two traits correlate at r = 0.63.</p>
+<p>Extraversion is the softest scale because Direct and Friendly pull against each other. Across all 41 models, the same three legacy models (GPT-3.5 Turbo, Llama 4 Maverick and GPT-4o) sit near the bottom of almost every scale.</p>
+<h3 id="the-first-crack-agreeableness">The first crack: Agreeableness</h3>
+<p>The locked Agreeableness scale failed outright. In people, pushing back counts against Agreeableness. In these models, Constructive Pushback rises with Sincere (ρ = 0.51) and Emotionally Intelligent (ρ = 0.62), and falls with Sycophantic (ρ = −0.63). The warm models are also the ones that push back, and the people-pleasers are the weaker models. The judges seem to read pushback as honesty, not disagreeableness.</p>
+<p>I report the failure as it stands, beside a clearly labelled repair that keeps only Sincere and Emotionally Intelligent. The repair was added after seeing the results, so treat it as exploratory.</p>
+<h3 id="the-missing-trait-neuroticism">The missing trait: Neuroticism</h3>
+<p>There is no Neuroticism score. The benchmark never puts a model under emotional pressure, so there is no behaviour to score. That is a limit of the measurement, not evidence that models are emotionally stable.</p>
+<h3 id="sidebar-just-for-fun-anxious-hedging">Sidebar, just for fun: Anxious Hedging</h3>
+<p>I tried a novelty stand-in anyway: Admits Uncertainty, Disclaims Assumptions, Sycophantic and reverse-scored Confident. It does not hold together (alpha 0.12), so it is not a scale. For what it is worth, GPT-6 Astra, GPT-6.1 Sol and Muse Spark Open came out most "anxious". The most epistemically careful models look neurotic, which says more about the index than the models.</p>
+<h2 id="the-twist-two-personalities-not-five">The twist: two personalities, not five</h2>
+<p>When the independent reviewer checked the structure, the five scores turned out to be mostly measuring two things. A parallel analysis, which tests each component against random shuffles of the same data, found two components that clearly beat chance (13.5 and 6.0 against chance levels of 3.4 and 2.9) and a borderline third.</p>
+<figure class="chart"><div id="scatter"></div><figcaption>Principal components of all 30 AA-PersonalityBench traits, 41 models, snapshot 27 Oct 2026. Tap a lab in the legend to highlight it; hover or tap a dot for the model.</figcaption></figure>
+<p><strong>Polish, 45% of the variance.</strong> Lexically Varied, Pragmatic, Eloquent and Creative load strongly on it, and Sycophantic and Slop load against it. GPT-3.5 Turbo, Llama 4 Maverick and GPT-4o sit at the far left. Without those three it drops to 35%, so part of polish is simply how recent the model is, and part is likely the judges' halo.</p>
+<p><strong>House style, 20% of the variance.</strong> One end is Direct, Answer First, Admits Uncertainty and Truthful. The other is Resource-Specific, Slop, Metaphorical and Scannable. OpenAI's GPT-6 family and Grok 4.6 and 4.7 sit at the terse end, Gemini and Muse models at the decorative end, and Claude, GLM and Kimi in between. Models from the same lab cluster together, which suggests each lab trains a recognizable voice.</p>
+<p>That recasts the leaderboards. Models that topped several Big Five boards were not five-way personalities; they were mostly polished. The Big Five supplied the vocabulary, and the data gave back two dimensions.</p>
+<h2 id="what-this-can-and-cant-say">What this can and can't say</h2>
+<p>It can describe how these 41 models write by default, in a vocabulary people already understand. It cannot say what any model is like inside.</p>
+<ul>
+<li><strong>AI judges rating writing.</strong> Every trait comes from AI judges reading single answers, and one of the judges (Claude Sonnet 5.5) is also in the pool. A shared halo across all 30 traits is likely.</li>
+<li><strong>One default answer.</strong> Each model answered each question once, with no system prompt, in English. Long conversations or set personas may look different.</li>
+<li><strong>Relative to this pool.</strong> Every score is a rank among these 41 models as of 27 October 2026. New models will move everyone (like GPT-6.1 Terra, released 26 October). The pool grew from 36 to 41 within a week of launch.</li>
+<li><strong>Ranks are fuzzy.</strong> In a resampling test, Claude Fable 5.1's Honesty-Humility rank ranged from 1st to 6th, and GPT-6.1 Sol's from 2nd to 17th. Read the clusters, not the positions.</li>
+<li><strong>Five labels, fewer dimensions.</strong> The dimensions correlate with each other at 0.5 to 0.7, where human Big Five scales are designed to be fairly independent. The twist section above shows why.</li>
+</ul>
+<h2 id="appendix-all-41-profiles">Appendix: all 41 profiles</h2>
+<p>Every model's profile, ordered from most to least polished, so you can find any model and see the general factor at work.</p>
+<figure class="chart"><div id="all41"></div><figcaption>Big Five and HEXACO scores derived from AA-PersonalityBench, 41 models, snapshot 27 Oct 2026. Hover or tap a point for its score.</figcaption></figure>
+<p>The shapes shrink almost steadily down the grid, which is the polish factor from the twist section. The exceptions are the interesting ones: DeepSeek V4.1 Flash is high on Conscientiousness but low on Openness, and the Gemini models lean hard on Extraversion while sitting low on Honesty-Humility.</p>
+<h2 id="credits-review-and-sources">Credits, review and sources</h2>
+<p><strong>Data.</strong> All trait percentiles come from <a href="https://artificialanalysis.ai/evaluations/aa-personalitybench">Artificial Analysis's AA-PersonalityBench</a>, read from their published heatmaps on 27 October 2026. The method is described on their <a href="https://artificialanalysis.ai/methodology/aa-personalitybench">methodology page</a>. Raw percentiles are theirs; please go to the source for them.</p>
+<p><strong>Analysis.</strong> I did this analysis with Claude (Anthropic's Claude Opus 5.5). Claude models are in the pool and lead several scales, which is one reason the mapping was locked in advance and every step is shown here.</p>
+<p><strong>Independent review.</strong> Before settling on any charts, I brought in a separate AI agent that had not seen our reasoning to audit the work. It found:</p>
+<ul>
+<li><strong>Transcription:</strong> 0 mismatches in 533 cells checked one by one against the heatmaps, plus clean spot checks across the other indexes</li>
+<li><strong>Code:</strong> no bugs, and the results reproduced exactly on a rerun</li>
+<li><strong>Structure:</strong> only two clear dimensions, not five, which became the twist in this write-up</li>
+</ul>
+<p><strong>Data and code.</strong> The scoring scripts and the derived scores are available on request.</p>
+<p><strong>Sources</strong></p>
+<ul>
+<li><a href="https://artificialanalysis.ai/evaluations/aa-personalitybench">AA-PersonalityBench results</a>, Artificial Analysis</li>
+<li><a href="https://artificialanalysis.ai/methodology/aa-personalitybench">AA-PersonalityBench methodology</a>, Artificial Analysis</li>
+<li><a href="https://verdi.cs.ucl.ac.uk/constructDB/publications/goldberg-alternative-1990.html">Goldberg (1990), An alternative "description of personality": The Big-Five factor structure</a>, <em>Journal of Personality and Social Psychology</em></li>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/1635039/">McCrae &amp; John (1992), An introduction to the five-factor model and its applications</a>, <em>Journal of Personality</em></li>
+<li><a href="https://en.wikipedia.org/wiki/Agreeableness">Agreeableness and the NEO PI-R facets</a>, Wikipedia</li>
+</ul>
+</article>
+<footer>Trait data © Artificial Analysis, used with attribution. Analysis, scores and charts by Shane O'Connor with Claude.</footer>
+</main>
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+<script>
+const SCATTER = [{"model": "Claude Fable 5.1 (max with fallback)", "name": "Claude Fable 5.1", "lab": "Anthropic", "polish": 7.65, "style": 0.16, "tag": true}, {"model": "GLM-5.3 (max)", "name": "GLM-5.3", "lab": "Other labs", "polish": 4.73, "style": 0.72, "tag": false}, {"model": "GLM-5.3-Flash", "name": "GLM-5.3-Flash", "lab": "Other labs", "polish": 3.81, "style": 0.55, "tag": false}, {"model": "Kimi K3 (max)", "name": "Kimi K3", "lab": "Other labs", "polish": 3.7, "style": 0.77, "tag": false}, {"model": "Claude Opus 5.5 (max with fallback)", "name": "Claude Opus 5.5", "lab": "Anthropic", "polish": 5.21, "style": 0.64, "tag": false}, {"model": "Muse Wonder (max)", "name": "Muse Wonder", "lab": "Meta", "polish": 4.95, "style": -2.62, "tag": false}, {"model": "Mistral Large 4 Preview", "name": "Mistral Large 4 Preview", "lab": "Other labs", "polish": 1.11, "style": -1.88, "tag": false}, {"model": "Gemini 4 Argon (high)", "name": "Gemini 4 Argon", "lab": "Google", "polish": 1.36, "style": -3.95, "tag": true}, {"model": "Claude Haiku 5.5 (max)", "name": "Claude Haiku 5.5", "lab": "Anthropic", "polish": 2.85, "style": 2.18, "tag": false}, {"model": "Inkling (xhigh)", "name": "Inkling", "lab": "Other labs", "polish": 2.04, "style": -1.52, "tag": false}, {"model": "Gemini 3.8 Flash (high)", "name": "Gemini 3.8 Flash", "lab": "Google", "polish": 1.61, "style": -3.66, "tag": false}, {"model": "Grok 4.7 (xhigh)", "name": "Grok 4.7", "lab": "xAI", "polish": 0.82, "style": 3.63, "tag": false}, {"model": "Claude Sonnet 5.5 (max with fallback)", "name": "Claude Sonnet 5.5", "lab": "Anthropic", "polish": 3.43, "style": 1.44, "tag": false}, {"model": "Nemotron 3.5 Super VL", "name": "Nemotron 3.5 Super VL", "lab": "Other labs", "polish": 0.02, "style": -1.25, "tag": false}, {"model": "Muse Spark 1.3 (max)", "name": "Muse Spark 1.3", "lab": "Meta", "polish": 3.79, "style": -3.61, "tag": false}, {"model": "Kimi K3.1 Pro", "name": "Kimi K3.1 Pro", "lab": "Other labs", "polish": 1.27, "style": 2.91, "tag": false}, {"model": "Grok 4.6 (xhigh)", "name": "Grok 4.6", "lab": "xAI", "polish": -0.4, "style": 2.64, "tag": false}, {"model": "Gemini 3.1 Pro Preview", "name": "Gemini 3.1 Pro Preview", "lab": "Google", "polish": -1.34, "style": -3.53, "tag": false}, {"model": "DeepSeek V4.1 Flash (max)", "name": "DeepSeek V4.1 Flash", "lab": "Other labs", "polish": 1.72, "style": 0.35, "tag": false}, {"model": "GPT-6 Astra (max)", "name": "GPT-6 Astra", "lab": "OpenAI", "polish": 1.51, "style": 3.35, "tag": false}, {"model": "Muse Spark Open (xhigh)", "name": "Muse Spark Open", "lab": "Meta", "polish": 1.77, "style": -3.63, "tag": false}, {"model": "MiniMax-M3", "name": "MiniMax-M3", "lab": "Other labs", "polish": -0.9, "style": -0.98, "tag": false}, {"model": "GPT-6.1 Sol (max)", "name": "GPT-6.1 Sol", "lab": "OpenAI", "polish": 1.0, "style": 3.7, "tag": false}, {"model": "DeepSeek V4.1 Flash 1017 (max)", "name": "DeepSeek V4.1 Flash 1017", "lab": "Other labs", "polish": 1.36, "style": 0.93, "tag": false}, {"model": "Grok 4.5 (high)", "name": "Grok 4.5", "lab": "xAI", "polish": -0.02, "style": 0.43, "tag": false}, {"model": "Claude Sonnet 5.5 (medium with fallback)", "name": "Claude Sonnet 5.5 (medium)", "lab": "Anthropic", "polish": 0.43, "style": 1.27, "tag": false}, {"model": "Beam 1.0", "name": "Beam 1.0", "lab": "Other labs", "polish": 0.72, "style": -1.71, "tag": false}, {"model": "GPT-6 Luna (max)", "name": "GPT-6 Luna", "lab": "OpenAI", "polish": -1.31, "style": 4.43, "tag": false}, {"model": "Step 5 Preview", "name": "Step 5 Preview", "lab": "Other labs", "polish": -0.81, "style": -0.01, "tag": false}, {"model": "MiMo-V2.6-Pro", "name": "MiMo-V2.6-Pro", "lab": "Other labs", "polish": -1.47, "style": -0.52, "tag": false}, {"model": "GPT-6 Sol (max)", "name": "GPT-6 Sol", "lab": "OpenAI", "polish": -2.07, "style": 5.23, "tag": true}, {"model": "Muse Glimmer (high)", "name": "Muse Glimmer", "lab": "Meta", "polish": -1.79, "style": -1.36, "tag": false}, {"model": "K2 Horizon 375B A23B", "name": "K2 Horizon 375B A23B", "lab": "Other labs", "polish": -3.04, "style": -4.2, "tag": false}, {"model": "MiniMax-M3.1-Flash", "name": "MiniMax-M3.1-Flash", "lab": "Other labs", "polish": -2.48, "style": 1.9, "tag": false}, {"model": "Qwen3.8 Max (0902)", "name": "Qwen3.8 Max (0902)", "lab": "Other labs", "polish": -2.43, "style": 0.09, "tag": false}, {"model": "Qwen3.8 27B (xhigh)", "name": "Qwen3.8 27B", "lab": "Other labs", "polish": -2.92, "style": -0.58, "tag": false}, {"model": "GPT-5.4 mini (non-reasoning)", "name": "GPT-5.4 mini (non-reasoning)", "lab": "OpenAI", "polish": -4.71, "style": 1.17, "tag": false}, {"model": "Nemotron 3 Ultra", "name": "Nemotron 3 Ultra", "lab": "Other labs", "polish": -5.32, "style": -3.5, "tag": false}, {"model": "GPT-4o (Nov)", "name": "GPT-4o (Nov)", "lab": "OpenAI", "polish": -7.21, "style": -1.07, "tag": false}, {"model": "Llama 4 Maverick", "name": "Llama 4 Maverick", "lab": "Meta", "polish": -8.55, "style": -0.82, "tag": true}, {"model": "GPT-3.5 Turbo", "name": "GPT-3.5 Turbo", "lab": "OpenAI", "polish": -10.09, "style": 1.94, "tag": true}];
+const RADAR = [{"name": "Claude Fable 5.1", "lab": "Anthropic", "scores": [{"k": "O", "dim": "Openness", "pct": 100}, {"k": "C", "dim": "Conscientiousness", "pct": 93}, {"k": "E", "dim": "Extraversion", "pct": 100}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 100}, {"k": "H", "dim": "Honesty-Humility", "pct": 100}]}, {"name": "GLM-5.3", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 98}, {"k": "C", "dim": "Conscientiousness", "pct": 46}, {"k": "E", "dim": "Extraversion", "pct": 88}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 98}, {"k": "H", "dim": "Honesty-Humility", "pct": 83}]}, {"name": "Muse Wonder", "lab": "Meta", "scores": [{"k": "O", "dim": "Openness", "pct": 90}, {"k": "C", "dim": "Conscientiousness", "pct": 98}, {"k": "E", "dim": "Extraversion", "pct": 95}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 95}, {"k": "H", "dim": "Honesty-Humility", "pct": 61}]}, {"name": "GPT-6 Astra", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 49}, {"k": "C", "dim": "Conscientiousness", "pct": 85}, {"k": "E", "dim": "Extraversion", "pct": 44}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 83}, {"k": "H", "dim": "Honesty-Humility", "pct": 93}]}, {"name": "DeepSeek V4.1 Flash", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 37}, {"k": "C", "dim": "Conscientiousness", "pct": 95}, {"k": "E", "dim": "Extraversion", "pct": 78}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 41}, {"k": "H", "dim": "Honesty-Humility", "pct": 63}]}, {"name": "Grok 4.7", "lab": "xAI", "scores": [{"k": "O", "dim": "Openness", "pct": 56}, {"k": "C", "dim": "Conscientiousness", "pct": 68}, {"k": "E", "dim": "Extraversion", "pct": 61}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 71}, {"k": "H", "dim": "Honesty-Humility", "pct": 71}]}, {"name": "Gemini 4 Argon", "lab": "Google", "scores": [{"k": "O", "dim": "Openness", "pct": 76}, {"k": "C", "dim": "Conscientiousness", "pct": 61}, {"k": "E", "dim": "Extraversion", "pct": 93}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 39}, {"k": "H", "dim": "Honesty-Humility", "pct": 17}]}, {"name": "GPT-6 Sol", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 17}, {"k": "C", "dim": "Conscientiousness", "pct": 37}, {"k": "E", "dim": "Extraversion", "pct": 46}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 66}, {"k": "H", "dim": "Honesty-Humility", "pct": 49}]}, {"name": "GPT-3.5 Turbo", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 2}, {"k": "C", "dim": "Conscientiousness", "pct": 2}, {"k": "E", "dim": "Extraversion", "pct": 2}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 7}, {"k": "H", "dim": "Honesty-Humility", "pct": 2}]}];
+const ALL41 = [{"name": "Claude Fable 5.1", "lab": "Anthropic", "scores": [{"k": "O", "dim": "Openness", "pct": 100}, {"k": "C", "dim": "Conscientiousness", "pct": 93}, {"k": "E", "dim": "Extraversion", "pct": 100}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 100}, {"k": "H", "dim": "Honesty-Humility", "pct": 100}]}, {"name": "Claude Opus 5.5", "lab": "Anthropic", "scores": [{"k": "O", "dim": "Openness", "pct": 88}, {"k": "C", "dim": "Conscientiousness", "pct": 100}, {"k": "E", "dim": "Extraversion", "pct": 80}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 88}, {"k": "H", "dim": "Honesty-Humility", "pct": 95}]}, {"name": "Muse Wonder", "lab": "Meta", "scores": [{"k": "O", "dim": "Openness", "pct": 90}, {"k": "C", "dim": "Conscientiousness", "pct": 98}, {"k": "E", "dim": "Extraversion", "pct": 95}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 95}, {"k": "H", "dim": "Honesty-Humility", "pct": 61}]}, {"name": "GLM-5.3", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 98}, {"k": "C", "dim": "Conscientiousness", "pct": 46}, {"k": "E", "dim": "Extraversion", "pct": 88}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 98}, {"k": "H", "dim": "Honesty-Humility", "pct": 83}]}, {"name": "GLM-5.3-Flash", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 83}, {"k": "C", "dim": "Conscientiousness", "pct": 66}, {"k": "E", "dim": "Extraversion", "pct": 85}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 90}, {"k": "H", "dim": "Honesty-Humility", "pct": 73}]}, {"name": "Muse Spark 1.3", "lab": "Meta", "scores": [{"k": "O", "dim": "Openness", "pct": 95}, {"k": "C", "dim": "Conscientiousness", "pct": 76}, {"k": "E", "dim": "Extraversion", "pct": 98}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 80}, {"k": "H", "dim": "Honesty-Humility", "pct": 44}]}, {"name": "Kimi K3", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 93}, {"k": "C", "dim": "Conscientiousness", "pct": 51}, {"k": "E", "dim": "Extraversion", "pct": 83}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 93}, {"k": "H", "dim": "Honesty-Humility", "pct": 76}]}, {"name": "Claude Sonnet 5.5", "lab": "Anthropic", "scores": [{"k": "O", "dim": "Openness", "pct": 73}, {"k": "C", "dim": "Conscientiousness", "pct": 83}, {"k": "E", "dim": "Extraversion", "pct": 71}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 73}, {"k": "H", "dim": "Honesty-Humility", "pct": 98}]}, {"name": "Claude Haiku 5.5", "lab": "Anthropic", "scores": [{"k": "O", "dim": "Openness", "pct": 68}, {"k": "C", "dim": "Conscientiousness", "pct": 90}, {"k": "E", "dim": "Extraversion", "pct": 68}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 85}, {"k": "H", "dim": "Honesty-Humility", "pct": 78}]}, {"name": "Inkling", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 80}, {"k": "C", "dim": "Conscientiousness", "pct": 71}, {"k": "E", "dim": "Extraversion", "pct": 51}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 49}, {"k": "H", "dim": "Honesty-Humility", "pct": 54}]}, {"name": "Muse Spark Open", "lab": "Meta", "scores": [{"k": "O", "dim": "Openness", "pct": 85}, {"k": "C", "dim": "Conscientiousness", "pct": 34}, {"k": "E", "dim": "Extraversion", "pct": 56}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 61}, {"k": "H", "dim": "Honesty-Humility", "pct": 51}]}, {"name": "DeepSeek V4.1 Flash", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 37}, {"k": "C", "dim": "Conscientiousness", "pct": 95}, {"k": "E", "dim": "Extraversion", "pct": 78}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 41}, {"k": "H", "dim": "Honesty-Humility", "pct": 63}]}, {"name": "Gemini 3.8 Flash", "lab": "Google", "scores": [{"k": "O", "dim": "Openness", "pct": 71}, {"k": "C", "dim": "Conscientiousness", "pct": 73}, {"k": "E", "dim": "Extraversion", "pct": 90}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 29}, {"k": "H", "dim": "Honesty-Humility", "pct": 22}]}, {"name": "GPT-6 Astra", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 49}, {"k": "C", "dim": "Conscientiousness", "pct": 85}, {"k": "E", "dim": "Extraversion", "pct": 44}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 83}, {"k": "H", "dim": "Honesty-Humility", "pct": 93}]}, {"name": "DeepSeek V4.1 Flash 1017", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 32}, {"k": "C", "dim": "Conscientiousness", "pct": 78}, {"k": "E", "dim": "Extraversion", "pct": 63}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 32}, {"k": "H", "dim": "Honesty-Humility", "pct": 88}]}, {"name": "Gemini 4 Argon", "lab": "Google", "scores": [{"k": "O", "dim": "Openness", "pct": 76}, {"k": "C", "dim": "Conscientiousness", "pct": 61}, {"k": "E", "dim": "Extraversion", "pct": 93}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 39}, {"k": "H", "dim": "Honesty-Humility", "pct": 17}]}, {"name": "Kimi K3.1 Pro", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 44}, {"k": "C", "dim": "Conscientiousness", "pct": 80}, {"k": "E", "dim": "Extraversion", "pct": 59}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 63}, {"k": "H", "dim": "Honesty-Humility", "pct": 85}]}, {"name": "Mistral Large 4 Preview", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 78}, {"k": "C", "dim": "Conscientiousness", "pct": 44}, {"k": "E", "dim": "Extraversion", "pct": 49}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 78}, {"k": "H", "dim": "Honesty-Humility", "pct": 34}]}, {"name": "GPT-6.1 Sol", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 34}, {"k": "C", "dim": "Conscientiousness", "pct": 88}, {"k": "E", "dim": "Extraversion", "pct": 54}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 76}, {"k": "H", "dim": "Honesty-Humility", "pct": 90}]}, {"name": "Grok 4.7", "lab": "xAI", "scores": [{"k": "O", "dim": "Openness", "pct": 56}, {"k": "C", "dim": "Conscientiousness", "pct": 68}, {"k": "E", "dim": "Extraversion", "pct": 61}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 71}, {"k": "H", "dim": "Honesty-Humility", "pct": 71}]}, {"name": "Beam 1.0", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 63}, {"k": "C", "dim": "Conscientiousness", "pct": 49}, {"k": "E", "dim": "Extraversion", "pct": 17}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 34}, {"k": "H", "dim": "Honesty-Humility", "pct": 68}]}, {"name": "Claude Sonnet 5.5 (medium)", "lab": "Anthropic", "scores": [{"k": "O", "dim": "Openness", "pct": 46}, {"k": "C", "dim": "Conscientiousness", "pct": 39}, {"k": "E", "dim": "Extraversion", "pct": 39}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 59}, {"k": "H", "dim": "Honesty-Humility", "pct": 80}]}, {"name": "Nemotron 3.5 Super VL", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 61}, {"k": "C", "dim": "Conscientiousness", "pct": 63}, {"k": "E", "dim": "Extraversion", "pct": 29}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 37}, {"k": "H", "dim": "Honesty-Humility", "pct": 41}]}, {"name": "Grok 4.5", "lab": "xAI", "scores": [{"k": "O", "dim": "Openness", "pct": 39}, {"k": "C", "dim": "Conscientiousness", "pct": 41}, {"k": "E", "dim": "Extraversion", "pct": 73}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 20}, {"k": "H", "dim": "Honesty-Humility", "pct": 59}]}, {"name": "Grok 4.6", "lab": "xAI", "scores": [{"k": "O", "dim": "Openness", "pct": 29}, {"k": "C", "dim": "Conscientiousness", "pct": 29}, {"k": "E", "dim": "Extraversion", "pct": 66}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 44}, {"k": "H", "dim": "Honesty-Humility", "pct": 66}]}, {"name": "Step 5 Preview", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 27}, {"k": "C", "dim": "Conscientiousness", "pct": 56}, {"k": "E", "dim": "Extraversion", "pct": 41}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 46}, {"k": "H", "dim": "Honesty-Humility", "pct": 37}]}, {"name": "MiniMax-M3", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 66}, {"k": "C", "dim": "Conscientiousness", "pct": 12}, {"k": "E", "dim": "Extraversion", "pct": 34}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 68}, {"k": "H", "dim": "Honesty-Humility", "pct": 27}]}, {"name": "GPT-6 Luna", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 20}, {"k": "C", "dim": "Conscientiousness", "pct": 59}, {"k": "E", "dim": "Extraversion", "pct": 37}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 54}, {"k": "H", "dim": "Honesty-Humility", "pct": 56}]}, {"name": "Gemini 3.1 Pro Preview", "lab": "Google", "scores": [{"k": "O", "dim": "Openness", "pct": 51}, {"k": "C", "dim": "Conscientiousness", "pct": 27}, {"k": "E", "dim": "Extraversion", "pct": 76}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 24}, {"k": "H", "dim": "Honesty-Humility", "pct": 12}]}, {"name": "MiMo-V2.6-Pro", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 54}, {"k": "C", "dim": "Conscientiousness", "pct": 10}, {"k": "E", "dim": "Extraversion", "pct": 20}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 51}, {"k": "H", "dim": "Honesty-Humility", "pct": 46}]}, {"name": "Muse Glimmer", "lab": "Meta", "scores": [{"k": "O", "dim": "Openness", "pct": 59}, {"k": "C", "dim": "Conscientiousness", "pct": 15}, {"k": "E", "dim": "Extraversion", "pct": 15}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 56}, {"k": "H", "dim": "Honesty-Humility", "pct": 24}]}, {"name": "GPT-6 Sol", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 17}, {"k": "C", "dim": "Conscientiousness", "pct": 37}, {"k": "E", "dim": "Extraversion", "pct": 46}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 66}, {"k": "H", "dim": "Honesty-Humility", "pct": 49}]}, {"name": "Qwen3.8 Max", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 24}, {"k": "C", "dim": "Conscientiousness", "pct": 32}, {"k": "E", "dim": "Extraversion", "pct": 27}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 27}, {"k": "H", "dim": "Honesty-Humility", "pct": 39}]}, {"name": "MiniMax-M3.1-Flash", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 12}, {"k": "C", "dim": "Conscientiousness", "pct": 54}, {"k": "E", "dim": "Extraversion", "pct": 32}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 17}, {"k": "H", "dim": "Honesty-Humility", "pct": 32}]}, {"name": "Qwen3.8 27B", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 22}, {"k": "C", "dim": "Conscientiousness", "pct": 24}, {"k": "E", "dim": "Extraversion", "pct": 24}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 22}, {"k": "H", "dim": "Honesty-Humility", "pct": 29}]}, {"name": "K2 Horizon 375B A23B", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 41}, {"k": "C", "dim": "Conscientiousness", "pct": 22}, {"k": "E", "dim": "Extraversion", "pct": 12}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 12}, {"k": "H", "dim": "Honesty-Humility", "pct": 15}]}, {"name": "GPT-5.4 mini", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 15}, {"k": "C", "dim": "Conscientiousness", "pct": 17}, {"k": "E", "dim": "Extraversion", "pct": 22}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 15}, {"k": "H", "dim": "Honesty-Humility", "pct": 20}]}, {"name": "Nemotron 3 Ultra", "lab": "Other labs", "scores": [{"k": "O", "dim": "Openness", "pct": 10}, {"k": "C", "dim": "Conscientiousness", "pct": 20}, {"k": "E", "dim": "Extraversion", "pct": 7}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 2}, {"k": "H", "dim": "Honesty-Humility", "pct": 10}]}, {"name": "GPT-4o", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 7}, {"k": "C", "dim": "Conscientiousness", "pct": 7}, {"k": "E", "dim": "Extraversion", "pct": 10}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 10}, {"k": "H", "dim": "Honesty-Humility", "pct": 7}]}, {"name": "Llama 4 Maverick", "lab": "Meta", "scores": [{"k": "O", "dim": "Openness", "pct": 5}, {"k": "C", "dim": "Conscientiousness", "pct": 5}, {"k": "E", "dim": "Extraversion", "pct": 5}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 5}, {"k": "H", "dim": "Honesty-Humility", "pct": 5}]}, {"name": "GPT-3.5 Turbo", "lab": "OpenAI", "scores": [{"k": "O", "dim": "Openness", "pct": 2}, {"k": "C", "dim": "Conscientiousness", "pct": 2}, {"k": "E", "dim": "Extraversion", "pct": 2}, {"k": "A", "dim": "Agreeableness (repaired)", "pct": 7}, {"k": "H", "dim": "Honesty-Humility", "pct": 2}]}];
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const LAB_VAR = { "Anthropic": "--anthropic", "OpenAI": "--openai", "Google": "--google", "Meta": "--meta", "xAI": "--xai", "Other labs": "--other" };
+  const col = lab => `var(${LAB_VAR[lab] || "--other"})`;
+  const el = (tag, attrs = {}, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+
+  // Shared tooltip: follows the pointer on hover, pins on tap
+  const tip = document.getElementById("tip");
+  let pinned = null;
+  function show(html, x, y) {
+    tip.innerHTML = html; tip.classList.add("on");
+    const r = tip.getBoundingClientRect();
+    let left = x + 14, top = y - r.height - 12;
+    if (left + r.width > window.innerWidth - 8) left = x - r.width - 14;
+    if (top < 8) top = y + 16;
+    tip.style.left = Math.max(8, left) + "px"; tip.style.top = top + "px";
+  }
+  function hide() { tip.classList.remove("on"); pinned = null; }
+  function bindTip(node, html) {
+    node.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") show(html, e.clientX, e.clientY); });
+    node.addEventListener("pointermove", e => { if (e.pointerType === "mouse") show(html, e.clientX, e.clientY); });
+    node.addEventListener("pointerleave", e => { if (e.pointerType === "mouse" && pinned !== node) hide(); });
+    node.addEventListener("click", e => {
+      e.stopPropagation();
+      if (pinned === node) { hide(); return; }
+      pinned = node; show(html, e.clientX, e.clientY);
+    });
+  }
+  document.addEventListener("click", () => { if (pinned) hide(); });
+  window.addEventListener("scroll", () => { if (pinned) hide(); }, { passive: true });
+
+  // ---------- Radar small multiples ----------
+  function drawRadarGrid(radarBox, DATA, title, sub, gridClass) {
+    if (!radarBox) return;
+    radarBox.insertAdjacentHTML("beforeend",
+      `<p class="chart-title">${title}</p><p class="chart-sub">${sub}</p>`);
+    const grid = document.createElement("div"); grid.className = gridClass; radarBox.appendChild(grid);
+    const R = 62, C = 90, ang = i => (-90 + i * 72) * Math.PI / 180;
+    const pt = (i, p) => [C + Math.cos(ang(i)) * R * p / 100, C + Math.sin(ang(i)) * R * p / 100];
+    DATA.forEach(m => {
+      const card = document.createElement("div"); card.className = "radar-card";
+      card.innerHTML = `<h4>${m.name}</h4>`; grid.appendChild(card);
+      const svg = el("svg", { viewBox: "0 0 180 180", role: "img", "aria-label": `${m.name} profile: ` + m.scores.map(s => `${s.dim} ${s.pct}`).join(", ") }, card);
+      [25, 50, 75, 100].forEach(q => el("polygon", { points: m.scores.map((_, i) => pt(i, q).join(",")).join(" "), fill: "none", stroke: "var(--grid)" }, svg));
+      m.scores.forEach((_, i) => { const [x, y] = pt(i, 100); el("line", { x1: C, y1: C, x2: x, y2: y, stroke: "var(--grid)" }, svg); });
+      const vals = m.scores.map((s, i) => pt(i, Math.max(s.pct, 3)));
+      el("polygon", { points: vals.map(p => p.join(",")).join(" "), fill: col(m.lab), "fill-opacity": .22, stroke: col(m.lab), "stroke-width": 1.75, "stroke-linejoin": "round" }, svg);
+      m.scores.forEach((s, i) => {
+        const [x, y] = vals[i];
+        el("circle", { cx: x, cy: y, r: 3.2, fill: col(m.lab) }, svg);
+        const hit = el("circle", { cx: x, cy: y, r: 11, fill: "transparent", class: "pt" }, svg);
+        bindTip(hit, `<b>${m.name}</b><br>${s.dim}: ${s.pct} of 100`);
+        const [lx, ly] = pt(i, 124);
+        const t = el("text", { x: lx, y: ly + 4, "text-anchor": "middle", "font-size": 11, fill: "var(--quiet)" }, svg);
+        t.textContent = s.k;
+      });
+    });
+  }
+  const KEY = "Rank among all 41 models on each scale, 0 to 100. O Openness · C Conscientiousness · E Extraversion · A Agreeableness (repaired) · H Honesty-Humility";
+  drawRadarGrid(document.getElementById("radar"), RADAR, "The most polished models fill out nearly every axis",
+    'Nine models shown here; all 41 are in the <a href="#appendix-all-41-profiles">appendix</a>. ' + KEY, "radar-grid");
+  drawRadarGrid(document.getElementById("all41"), ALL41, "Profiles shrink steadily from the most to the least polished model",
+    "All 41 models, ordered by polish. " + KEY, "radar-grid radar-grid-4");
+
+  // ---------- Two-axis map ----------
+  const scBox = document.getElementById("scatter");
+  if (scBox) {
+    scBox.insertAdjacentHTML("beforeend",
+      '<p class="chart-title">Polish and house style explain 65% of how the models differ</p>' +
+      '<p class="chart-sub">Each dot is one of 41 models. Polish accounts for 45% of the variance across 30 traits; house style for 20%.</p>');
+    const labs = ["Anthropic", "OpenAI", "Google", "Meta", "xAI", "Other labs"];
+    const legend = document.createElement("div"); legend.className = "legend"; scBox.appendChild(legend);
+    const plot = document.createElement("div"); scBox.appendChild(plot);
+    let focus = null, groups = {}, lastNarrow = null;
+    function draw() {
+    const narrow = scBox.clientWidth < 560;
+    if (narrow === lastNarrow) return; lastNarrow = narrow; plot.innerHTML = "";
+    // On phones the chart is drawn squarer, with type and dots scaled up so they stay readable
+    const k = narrow ? 760 / Math.max(scBox.clientWidth, 300) * 0.82 : 1;
+    const W = 760, H = narrow ? 820 : 520, x0 = 40, x1 = 740, y0 = 34 * k, y1 = H - 70 * k;
+    const X = v => x0 + (v + 11) / 20 * (x1 - x0), Y = v => y1 - (v + 5) / 11 * (y1 - y0);
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Scatter of 41 models by polish and house style" }, plot);
+    el("line", { x1: x0, x2: x1, y1: Y(0), y2: Y(0), stroke: "var(--grid)" }, svg);
+    el("line", { x1: X(0), x2: X(0), y1: y0, y2: y1, stroke: "var(--grid)" }, svg);
+    el("line", { x1: x0, x2: x1, y1: y1, y2: y1, stroke: "var(--quiet)", "stroke-opacity": .5 }, svg);
+    const label = (txt, x, y, anchor = "start", weight = 400, size = 13, fill = "var(--quiet)") => {
+      const t = el("text", { x, y, "text-anchor": anchor, "font-size": size * k, "font-weight": weight, fill }, svg); t.textContent = txt; return t;
+    };
+    label(narrow ? "Terse, direct ↑" : "Terse, direct, answer-first ↑", x0 + 6, y0 + 10 * k);
+    label(narrow ? "Expansive, decorative ↓" : "Expansive, decorative, formatted ↓", x0 + 6, y1 - 10 * k);
+    label("← Less polished", x0, y1 + 24 * k);
+    label("More polished →", x1, y1 + 24 * k, "end");
+    if (!narrow) label("Polish: fluent, varied, creative, low slop and sycophancy", (x0 + x1) / 2, y1 + 54, "middle", 600, 14, "var(--ink)");
+
+    groups = {};
+    labs.forEach(l => groups[l] = el("g", { class: "lab-group" }, svg));
+    SCATTER.forEach(d => {
+      const g = groups[d.lab];
+      el("circle", { cx: X(d.polish), cy: Y(d.style), r: 7 * k, fill: col(d.lab), "fill-opacity": .9, stroke: "var(--surface)", "stroke-width": 1.5 * k }, g);
+      const hit = el("circle", { cx: X(d.polish), cy: Y(d.style), r: 14 * k, fill: "transparent", class: "pt" }, g);
+      const dir = d.style >= 0 ? "terse" : "decorative";
+      bindTip(hit, `<b>${d.name}</b><br>${d.lab}<br>Polish ${d.polish > 0 ? "+" : ""}${d.polish} · Style ${d.style > 0 ? "+" : ""}${d.style} (${dir})`);
+      if (d.tag) {
+        const left = d.polish > 5;
+        label(d.name, X(d.polish) + (left ? -12 : 12) * k, Y(d.style) + (left ? 22 : 4) * k, left ? "end" : "start", 500, 13, "var(--ink)");
+      }
+    });
+    apply();
+    }
+
+    function apply() {
+      labs.forEach(l => groups[l].style.opacity = !focus || focus === l ? 1 : .15);
+      legend.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lab === focus)));
+    }
+    labs.forEach(l => {
+      const b = document.createElement("button"); b.type = "button"; b.dataset.lab = l; b.setAttribute("aria-pressed", "false");
+      b.innerHTML = `<span class="dot" style="background:${col(l)}"></span>${l}`;
+      b.addEventListener("click", e => { e.stopPropagation(); focus = focus === l ? null : l; apply(); });
+      legend.appendChild(b);
+    });
+    draw();
+    let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(draw, 150); });
+  }
+})();
+</script>
+</body>
+</html>
