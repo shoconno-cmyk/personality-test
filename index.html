@@ -66,7 +66,7 @@ tbody tr:nth-child(5) td { color: var(--quiet); font-style: italic; }
 }
 .tip.on { opacity: 1; transform: none; }
 .tip b { font-weight: 650; }
-@media print { body { background: #fff; font-size: 12.5pt; } main { padding: 0 8px; } .chart { break-inside: auto; border: none; padding: 0; } .radar-card, .chart-title, .chart-sub, #scatter, h2, h3, table, tr { break-inside: avoid; } h2, h3 { break-after: avoid; } .legend button { border-color: #ccc; } .tip { display: none; } }
+@media print { .pdf-link { display: none; } body { background: #fff; font-size: 12.5pt; } main { padding: 0 8px; } .chart { break-inside: auto; border: none; padding: 0; } .radar-card, .chart-title, .chart-sub, #scatter, h2, h3, table, tr { break-inside: avoid; } h2, h3 { break-after: avoid; } .legend button { border-color: #ccc; } .tip { display: none; } }
 footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule); color: var(--quiet); font-size: 13px; }
 </style>
 </head>
@@ -75,7 +75,7 @@ footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule);
 <header>
   <p class="kicker">A curious peek, not serious psychometrics</p>
   <h1>41 AI Models Meet the Big Five Personality Test</h1>
-  <p class="byline">Shane O'Connor · 27 October 2026 · Data: Artificial Analysis PersonalityBench</p>
+  <p class="byline">Shane O'Connor · 27 October 2026 · Data: Artificial Analysis PersonalityBench<span class="pdf-link"> · <a href="personality_test.pdf" download>Download PDF</a></span></p>
 </header>
 <article>
 <p>I scored 41 AI models on the Big Five personality traits, then found the data only supports about two real dimensions, and one of them looks like each lab's house style.</p>
